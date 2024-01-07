@@ -98,7 +98,7 @@ func startTx(db *sql.DB) (*sql.Tx, error) {
 
 }
 
-func AddDatum(target string, date int, temp float64, hr float64) error {
+func AddData(target string, date int, temp float64, hr float64) error {
 	db, err := openDB(target)
 	if err != nil {
 		logger.Error(err)
@@ -129,7 +129,7 @@ func AddDatum(target string, date int, temp float64, hr float64) error {
 	return nil
 }
 
-func GetDatum(target string, date int) (*dbStruct, error) {
+func GetData(target string, date int) (*dbStruct, error) {
 	db, err := openDB(target)
 	if err != nil {
 		logger.Error(err)
@@ -161,7 +161,7 @@ func GetDatum(target string, date int) (*dbStruct, error) {
 	return d, nil
 }
 
-func GetData(target string, duration int, start int, limit int) (Data, error) {
+func GetDataSet(target string, duration int, start int, limit int) (Data, error) {
 	db, err := openDB(target)
 	if err != nil {
 		logger.Error(err)
