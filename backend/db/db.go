@@ -161,6 +161,30 @@ func GetData(target string, date int) (dbStruct, error) {
 	return *d, nil
 }
 
+func GetLatestData(target string) (dbStruct, error){
+	db, err := openDB(target)
+	if err != nil {
+		logger.Error(err)
+		return dbStruct{}, err
+	}
+	defer db.Close()
+
+	d := &dbStruct{}
+	err = db.QueryRow(fmt.Sprintf("SELECT * FROM %s ORDER BY date DESC LIMIT 1", target)).Scan(&d.Date, &d.Temp, &d.HR)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return dbStruct{}, nil
+		} else {
+			logger.Error(err)
+			return dbStruct{}, err
+
+		}
+	}
+
+	return *d, nil
+	
+}
+
 func GetDataSet(target string, duration int, start int, limit int) (Data, error) {
 	db, err := openDB(target)
 	if err != nil {
