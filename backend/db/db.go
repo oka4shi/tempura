@@ -129,36 +129,36 @@ func AddData(target string, date int, temp float64, hr float64) error {
 	return nil
 }
 
-func GetData(target string, date int) (*dbStruct, error) {
+func GetData(target string, date int) (dbStruct, error) {
 	db, err := openDB(target)
 	if err != nil {
 		logger.Error(err)
-		return nil, err
+		return dbStruct{}, err
 	}
 	defer db.Close()
 
 	err = db.QueryRow(fmt.Sprintf("SELECT date FROM %s WHERE date = ?", target), date).Scan(TrashScanner{})
 	if err == nil {
 		logger.Info(err)
-		return nil, ErrAlreadyExist
+		return dbStruct{}, ErrAlreadyExist
 	} else if err != sql.ErrNoRows {
 		logger.Error(err)
-		return nil, err
+		return dbStruct{}, err
 	}
 
 	d := &dbStruct{}
 	err = db.QueryRow(fmt.Sprintf("SELECT * FROM %s WHERE date = ?", target), date).Scan(&d.Date, &d.Temp, &d.HR)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return dbStruct{}, nil
 		} else {
 			logger.Error(err)
-			return nil, err
+			return dbStruct{}, err
 
 		}
 	}
 
-	return d, nil
+	return *d, nil
 }
 
 func GetDataSet(target string, duration int, start int, limit int) (Data, error) {
